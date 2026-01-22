@@ -1,4 +1,4 @@
-# QED Few-Shot Fine-Tuning and Evaluation
+# Enhancing Question Answering Explainability with QED
 
 This project provides scripts and configuration for few-shot fine-tuning and evaluation of language models on the QED (Question-Explanation-Data) task. Full dataset description can be found here - [QED Dataset](https://github.com/google-research-datasets/QED)
 The project supports various instruction-tuned models and includes a comprehensive evaluation with detailed span extraction and overlap analysis.
