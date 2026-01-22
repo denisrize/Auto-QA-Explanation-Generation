@@ -1,26 +1,82 @@
 # Enhancing Question Answering Explainability with QED
 
-This project provides scripts and configuration for few-shot fine-tuning and evaluation of language models on the QED (Question-Explanation-Data) task. Full dataset description can be found here - [QED Dataset](https://github.com/google-research-datasets/QED)
-The project supports various instruction-tuned models and includes a comprehensive evaluation with detailed span extraction and overlap analysis.
+> **📄 Based on the QED Framework:**
+>
+> **Lamm, M., Palomaki, J., Alberti, C., Andor, D., Choi, E., Soares, L. B., & Collins, M. (2021).** *QED: A Framework and Dataset for Explanations in Question Answering.* Transactions of the Association for Computational Linguistics, 9, 790-806.
+>
+> 🔗 **Paper:** [https://arxiv.org/abs/2009.06354](https://arxiv.org/abs/2009.06354)  
+> 🔗 **Original Dataset:** [google-research-datasets/QED](https://github.com/google-research-datasets/QED)
+---
 
 ---
+
+## 💡 Motivation
+
+The original QED paper demonstrated that structured explanation generation for question answering requires **extensive supervised fine-tuning** using specialized models like SpanBERT and T5. These approaches achieve strong results but come with significant drawbacks:
+
+- **High computational cost** — Full fine-tuning of large models requires substantial GPU resources
+- **Long training times** — Multiple epochs over the entire dataset
+- **Limited flexibility** — Task-specific architectural modifications
+
+**This project explores a resource-efficient alternative:** Can we achieve comparable QED task performance using modern instruction-tuned LLMs with minimal adaptation?
 
 ## Table of Contents
 
-1. [Results and Performance](#results-and-performance)
-2. [Project Structure](#project-structure)
-3. [Input Arguments](#input-arguments)
-4. [Training and Evaluation Pipeline](#training-and-evaluation-pipeline)
-5. [Configuration Files](#configuration-files)
-6. [Output Results Structure](#output-results-structure)
-7. [Model Output Extraction and Span Handling](#model-output-extraction-and-span-handling)
-8. [Evaluation Methodology](#evaluation-methodology)
-9. [Data Processing](#data-processing)
-10. [Example Usage](#example-usage)
+1. [Overview](#overview)
+2. [Results and Performance](#results-and-performance)
+3. [Project Structure](#project-structure)
+4. [Input Arguments](#input-arguments)
+5. [Training and Evaluation Pipeline](#training-and-evaluation-pipeline)
+6. [Configuration Files](#configuration-files)
+7. [Output Results Structure](#output-results-structure)
+8. [Model Output Extraction and Span Handling](#model-output-extraction-and-span-handling)
+9. [Evaluation Methodology](#evaluation-methodology)
+10. [Data Processing](#data-processing)
+11. [Example Usage](#example-usage)
+
+## Overview
+
+We investigate whether **prompting strategies** and **lightweight fine-tuning** can preserve accuracy while dramatically reducing computational requirements:
+
+| Approach | Training Required | Compute Cost | Flexibility |
+|----------|------------------|--------------|-------------|
+| Original QED (SpanBERT/T5) | Full fine-tuning | High | Low |
+| **Ours: Zero/Few-shot prompting** | None | Very Low | High |
+| **Ours: LoRA fine-tuning (3 epochs)** | Minimal | Low | High |
+
+### Key Research Questions
+
+1. **RQ1:** Can modern prompt-based LLMs achieve comparable QED task performance to the original paper's structured models?
+2. **RQ2:** How do different few-shot prompting strategies (zero-shot, one-shot, few-shot) influence QED performance for base and fine-tuned models?
 
 ---
 
-## 🏆 Results and Performance
+## 🔬 What We Explored
+
+### Prompting Strategies
+We systematically evaluated different prompting approaches on pre-trained LLMs **without any fine-tuning**:
+
+- **Zero-shot:** Task instructions only, no demonstration examples
+- **One-shot (fixed):** Single carefully selected demonstration
+- **One-shot (random):** Single randomly sampled demonstration  
+- **Few-shot (fixed):** Two complementary examples covering different linguistic phenomena
+- **Few-shot (random):** Two randomly sampled demonstrations
+
+### Lightweight Fine-tuning
+Using **LoRA (Low-Rank Adaptation)** with 4-bit quantization, we fine-tuned for only **3 epochs** — a fraction of the compute required by the original approach — to examine how minimal training affects:
+- Answer accuracy
+- Mention identification (referential equality detection)
+- Mention alignment (question-passage linking)
+
+### Models Tested
+- **LLaMA-3-8B-Instruct** (Meta)
+- **Qwen2.5-7B-Instruct** (Alibaba)
+
+Both are open-source, instruction-tuned models with comparable parameter counts, enabling fair architectural comparison.
+
+---
+
+## Results and Performance
 
 ### Key Achievements
 Our few-shot fine-tuning approach demonstrates significant improvements over base models across all QED evaluation metrics:
