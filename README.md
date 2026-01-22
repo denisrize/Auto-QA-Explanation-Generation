@@ -501,7 +501,3 @@ After running evaluation, check the results in:
 - **All Mention F1**: Overall entity extraction performance
 
 ---
-
-## Contact
-
-For questions or issues, please contact the project maintainer. 
